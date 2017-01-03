@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="28f616d5-9817-4e8c-a3b0-14f8b13e87bf" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/torrents_downloader/torrents_search.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/main.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/python-opensubtitles" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/torrents_downloader/magnet2torrent.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/torrents_downloader/westworld.torrent" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/torrent_downloader.iml" afterPath="$PROJECT_DIR$/.idea/torrent_downloader.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/torrents_downloader/main.py" afterPath="$PROJECT_DIR$/torrents_downloader/main.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/LICENSE" />
     </list>
     <ignored path="torrent_downloader.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -90,6 +82,7 @@
         <option value="$PROJECT_DIR$/subtitles_downloader/main.py" />
         <option value="$PROJECT_DIR$/torrents_downloader/main.py" />
         <option value="$PROJECT_DIR$/torrents_downloader/torrents_search.py" />
+        <option value="$PROJECT_DIR$/LICENSE" />
       </list>
     </option>
   </component>
@@ -902,12 +895,12 @@
       <workItem from="1483229060000" duration="241000" />
       <workItem from="1483229315331" duration="1806000" />
       <workItem from="1483276951639" duration="6332000" />
-      <workItem from="1483306292336" duration="27124000" />
+      <workItem from="1483306292336" duration="27348000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="35503000" />
+    <option name="totallyTimeSpent" value="35727000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1053" extended-state="6" />
@@ -1040,6 +1033,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334">
           <caret line="768" column="8" selection-start-line="768" selection-start-column="8" selection-end-line="768" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LICENSE">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3376206">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
           <folding />
         </state>
       </provider>
