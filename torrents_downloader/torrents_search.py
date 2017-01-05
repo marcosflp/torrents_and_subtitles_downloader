@@ -3,29 +3,82 @@
 import requests
 import time
 import re
+import sys
 from lxml import html
 
 
 class ThePirateBayApi(object):
     the_pirate_bay_search_link = "https://thepiratebay.org/search/"
-    tree = None
+    all_torrents_list = None
+    url_request = None
+    response = None
 
-    def get_all_searson(self, serie, season):
-        search_phrase = "{} {}"
-    def search(self, text):
+    paginator_index = '0'
+    order_by = {'seeders': '99'}
+    category = {'video': '200'}
+
+    def search_season(self, serie_name, season):
         """
-        :param text: string that is used on search
+        :param serie_name: String Name of the serie to be searched
+        :param season: Int of the serie season
+        :return: list of episodes that complete the season
+        """
+
+        episodes_from_season = []
+        episode = 1
+        attempts = 2
+
+        while episode <= 30:
+            search_pharase = "{} S{:02d}E{:02d}".format(serie_name, season, episode)
+            query = "{0}/{1}/{2}/{3}/".format(search_pharase, self.paginator_index, self.order_by['seeders'], self.category['video'])
+
+            url = self.the_pirate_bay_search_link + query
+            response = self._get(url)
+
+            top_results = self._get_top10_torrents(response)
+            if not top_results:
+                attempts -= 1
+                episode += 1
+                if attempts >= 0:
+                    continue
+                else:
+                    break
+
+            episodes_from_season.append(top_results[0])
+            episode += 1
+
+        return episodes_from_season
+
+    def search_episode(self, serie_name, season, episode):
+        """
+        :param serie_name: String Name of the serie to be searched
+        :param season: Int of the serie season
+        :param episode: Int of the serie episode
+        :return: list of top 10 magnet linksof the serie episode
+        """
+
+        search_pharase = "{} S{:02d}E{:02d}".format(serie_name, season, episode)
+        query = "{0}/{1}/{2}/{3}/".format(search_pharase, self.paginator_index, self.order_by['seeders'], self.category['video'])
+
+        url = self.the_pirate_bay_search_link + query
+        response = self._get(url)
+
+        return self._get_top10_torrents(response)[:10]
+
+    def search(self, search_pharase):
+        """
+        :param search_pharase: string that is used on search
         :return: list of top 10 magnet links
         """
 
-        paginator_page = '0'
-        order_by = {'seeders': '99'}
-        category = {'video': '200'}
+        query = "{0}/{1}/{2}/{3}/".format(search_pharase, self.paginator_index, self.order_by['seeders'], self.category['video'])
 
-        path = "{0}/{1}/{2}/{3}".format(text, paginator_page, order_by['seeders'], category['video'])
+        url = self.the_pirate_bay_search_link + query
+        response = self._get(url)
 
-        url = self.the_pirate_bay_search_link + path
+        return self._get_top10_torrents(response.content)[:10]
 
+    def _get(self, url):
         try:
             response = requests.get(url)
         except Exception:
@@ -34,32 +87,32 @@ class ThePirateBayApi(object):
             try:
                 response = requests.get(url)
             except Exception:
-                print("Connection error!\nUnable to reach opensubtitles.org servers!")
+                print("Connection error!\nUnable to reach opensubtitles.org servers!", OSError)
                 raise
 
         if response.status_code != 200:
             print("Connection error!\nResponse Status: {}".format(response.status_code))
-            raise
+            sys.exit(1)
 
-        if re.search(r'No hits.', response.content, re.I):
-            print("No result found. Try adding an asterisk or change the search phrase.")
-            return None
+        self.response = response
+        self.url_request = response.url
+        return response
 
-        if len(html.fromstring(response.content).xpath('//table[@id="searchResult"]/tr')) == 0:
-            print("No result found. Try adding an asterisk or change the search phrase.")
-            return None
-
-        top_results = self._get_magnet_links(response.content)
-
-        return top_results[:10]
-
-    def _get_magnet_links(self, response_content):
-        tree = html.fromstring(response_content)
+    def _get_top10_torrents(self, response):
+        """
+        Returns a list of the top 10 links based on seeders
+        :param response: response of a request
+        :return: list
+        """
+        tree = html.fromstring(response.content)
         torrents_list = []
         cont = 1
 
-        torrents_tree_list = tree.xpath('//table[@id="searchResult"]/tr')
+        # Result not found
+        if len(tree.xpath('//table[@id="searchResult"]/tr')) == 0:
+            return torrents_list
 
+        torrents_tree_list = tree.xpath('//table[@id="searchResult"]/tr')
         for item_tree in torrents_tree_list:
             data_tree = {
                 'title': item_tree.xpath('.//td/div[@class="detName"]/a/text()'),
@@ -72,42 +125,45 @@ class ThePirateBayApi(object):
             ## normalise data
             data = { 'position': cont }
 
-            # title
             title = data_tree['title']
             if title:
-                data['title'] = data_tree['title'][0]
+                if isinstance(title[0], basestring):
+                    data['title'] = data_tree['title'][0]
 
-            # size
             text = data_tree['size']
             if text:
-                text = text[0].encode('ascii', 'ignore').decode('ascii').strip()
-                re_size = re.search(r'size ([\d\.]+)\s?(\w+)', text, re.I)
-                if re_size:
-                    data['size'] = (float(re_size.group(1)), re_size.group(2).lower())
+                if isinstance(text[0], basestring):
+                    text = text[0].encode('ascii', 'ignore').decode('ascii').strip()
+                    re_size = re.search(r'size ([\d\.]+)\s?(\w+)', text, re.I)
+                    if re_size:
+                        data['size'] = (float(re_size.group(1)), re_size.group(2).lower())
 
-            # magnet link
             link = data_tree['link']
             if link:
                 data['link'] = data_tree['link'][0]
 
-            # seeds
             seeds = data_tree['seeds']
             if seeds:
-                data['seeds'] = int(seeds[0])
+                if isinstance(seeds, basestring):
+                    data['seeds'] = int(seeds[0])
 
-            # leeches
             leeches = data_tree['leeches']
             if leeches:
-                data['leeches'] = int(leeches[0])
+                if isinstance(leeches, basestring):
+                    data['leeches'] = int(leeches[0])
 
             torrents_list.append(data)
             cont += 1
 
-        self.torrents_list = torrents_list
+        self.all_torrents_list = torrents_list
+        return torrents_list[:10]
 
-        return torrents_list
+    def rank(self):
+        pass
 
 pb = ThePirateBayApi()
 
-top = pb.search('westworld s01e02')
-import pdb; pdb.set_trace()
+top = pb.search_season('game of thrones', 2)
+for x in top:
+    print x['title']
+# import pdb; pdb.set_trace()

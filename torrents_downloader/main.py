@@ -4,7 +4,7 @@ import time
 ses = lt.session()
 ses.listen_on(6881, 6891)
 
-link = "magnet:?xt=urn:btih:7e919e4346ae224a89ac4b5330a7fba2d54118b6&dn=Westworld.S01E01.1080p.HDTV.6CH.x265.HEVC-PSA.mkv&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=udp%3A%2F%2Fopen.demonii.com%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Fexodus.desync.com%3A6969"
+link = "magnet:?xt=urn:btih:46a6409c90473c51a26ef5ba6085f7d63d197467&dn=Westworld.S01E01.HDTV.x264-FUM%5Bettv%5D&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Fpublic.popcorn-tracker.org%3A6969"
 
 params = { 'save_path': '.', \
         'storage_mode': lt.storage_mode_t.storage_mode_sparse }
