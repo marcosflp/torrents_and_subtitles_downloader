@@ -29,7 +29,7 @@ class ThePirateBayApi(object):
         attempts = 2
 
         while episode <= 30:
-            search_pharase = "{} S{:02d}E{:02d}".format(serie_name, season, episode)
+            search_pharase = "{} S{:02d}E{:02d}".format(serie_name, int(season), episode)
             query = "{0}/{1}/{2}/{3}/".format(search_pharase, self.paginator_index, self.order_by['seeders'], self.category['video'])
 
             url = self.the_pirate_bay_search_link + query
@@ -157,13 +157,3 @@ class ThePirateBayApi(object):
 
         self.all_torrents_list = torrents_list
         return torrents_list[:10]
-
-    def rank(self):
-        pass
-
-pb = ThePirateBayApi()
-
-top = pb.search_season('game of thrones', 2)
-for x in top:
-    print x['title']
-# import pdb; pdb.set_trace()
