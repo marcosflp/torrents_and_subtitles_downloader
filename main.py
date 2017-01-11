@@ -13,11 +13,8 @@ def is_all_torrents_finished(handler_list):
 
     return True
 
-# serie_name = raw_input("Series name: ")
-# season = raw_input("Season: ")
-
-serie_name = "westworld"
-season = "1"
+serie_name = raw_input("Series name: ")
+season = raw_input("Season: ")
 
 tpb = ThePirateBayApi()
 episodes = tpb.search_season(serie_name, season)
