@@ -44,6 +44,7 @@ class ThePirateBayApi(object):
                 else:
                     break
 
+            print "Found: " + top_results[0]['title']
             episodes_from_season.append(top_results[0])
             episode += 1
 
