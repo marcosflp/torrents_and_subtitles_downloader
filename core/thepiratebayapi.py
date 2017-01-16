@@ -58,7 +58,7 @@ class ThePirateBayApi(object):
         :return: list of top 10 magnet linksof the serie episode
         """
 
-        search_pharase = "{} S{:02d}E{:02d}".format(serie_name, season, episode)
+        search_pharase = "{} S{:02d}E{:02d}".format(serie_name, int(season), int(episode))
         query = "{0}/{1}/{2}/{3}/".format(search_pharase, self.paginator_index, self.order_by['seeders'], self.category['video'])
 
         url = self.the_pirate_bay_search_link + query
@@ -77,7 +77,7 @@ class ThePirateBayApi(object):
         url = self.the_pirate_bay_search_link + query
         response = self._get(url)
 
-        return self._get_top10_torrents(response.content)[:10]
+        return self._get_top10_torrents(response)[:10]
 
     def _get(self, url):
         try:
