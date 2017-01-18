@@ -123,7 +123,7 @@ class ThePirateBayApi(object):
                 'leeches': item_tree.xpath('./td[3]/text()')
             }
 
-            ## normalise data
+            ## normalise data and validations
             data = { 'position': cont }
 
             title = data_tree['title']

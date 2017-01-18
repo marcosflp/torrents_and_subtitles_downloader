@@ -5,11 +5,12 @@ from tabulate import tabulate
 
 class TorrentClient(object):
     torrents = []
+    download_root_path = './downloads/'
 
     def __init__(self):
         self.session = lt.session()
         self.session.listen_on(6881, 6891)
-        self.params = { 'save_path': '../downloads',
+        self.params = { 'save_path': os.path.join(self.download_root_path,),
                         'storage_mode': lt.storage_mode_t.storage_mode_sparse }
 
     def add_magnet_torrent(self, link=None, t_list=None):
