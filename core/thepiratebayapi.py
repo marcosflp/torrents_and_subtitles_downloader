@@ -24,6 +24,7 @@ class ThePirateBayApi(object):
         :return: list of episodes that complete the season
         """
 
+        search_choice = 'season'
         episodes_from_season = []
         episode = 1
         attempts = 2
@@ -35,7 +36,7 @@ class ThePirateBayApi(object):
             url = self.the_pirate_bay_search_link + query
             response = self._get(url)
 
-            top_results = self._get_top10_torrents(response)
+            top_results = self._get_top10_torrents(response, search_choice=search_choice)
             if not top_results:
                 attempts -= 1
                 episode += 1
@@ -58,13 +59,14 @@ class ThePirateBayApi(object):
         :return: list of top 10 magnet linksof the serie episode
         """
 
+        search_choice = 'episode'
         search_pharase = "{} S{:02d}E{:02d}".format(serie_name, int(season), int(episode))
         query = "{0}/{1}/{2}/{3}/".format(search_pharase, self.paginator_index, self.order_by['seeders'], self.category['video'])
 
         url = self.the_pirate_bay_search_link + query
         response = self._get(url)
 
-        return self._get_top10_torrents(response)[:10]
+        return self._get_top10_torrents(response, search_choice)[:10]
 
     def search(self, search_pharase):
         """
@@ -72,12 +74,13 @@ class ThePirateBayApi(object):
         :return: list of top 10 magnet links
         """
 
+        search_choice = 'general'
         query = "{0}/{1}/{2}/{3}/".format(search_pharase, self.paginator_index, self.order_by['seeders'], self.category['video'])
 
         url = self.the_pirate_bay_search_link + query
         response = self._get(url)
 
-        return self._get_top10_torrents(response)[:10]
+        return self._get_top10_torrents(response, search_choice)[:10]
 
     def _get(self, url):
         try:
@@ -99,7 +102,7 @@ class ThePirateBayApi(object):
         self.url_request = response.url
         return response
 
-    def _get_top10_torrents(self, response):
+    def _get_top10_torrents(self, response, search_choice=None):
         """
         Returns a list of the top 10 links based on seeders
         :param response: response of a request
@@ -116,6 +119,7 @@ class ThePirateBayApi(object):
         torrents_tree_list = tree.xpath('//table[@id="searchResult"]/tr')
         for item_tree in torrents_tree_list:
             data_tree = {
+                'search_choice': search_choice,
                 'title': item_tree.xpath('.//td/div[@class="detName"]/a/text()'),
                 'size': item_tree.xpath('./td[2]/font/text()'),
                 'link': item_tree.xpath('./td[2]/a[1]/@href'),
@@ -157,4 +161,4 @@ class ThePirateBayApi(object):
             cont += 1
 
         self.all_torrents_list = torrents_list
-        return torrents_list[:10]
+        return torrents_list

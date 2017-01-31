@@ -1,30 +1,40 @@
 import libtorrent as lt
 import os
+import re
 from tabulate import tabulate
 
 
 class TorrentClient(object):
     torrents = []
-    download_root_path = './downloads/'
+    download_root_path = '../downloads/'
+    download_season_path = ''
 
     def __init__(self):
         self.session = lt.session()
         self.session.listen_on(6881, 6891)
-        self.params = { 'save_path': os.path.join(self.download_root_path,),
-                        'storage_mode': lt.storage_mode_t.storage_mode_sparse }
 
-    def add_magnet_torrent(self, link=None, t_list=None):
-        if t_list:
-            for t_link in t_list:
-                t = lt.add_magnet_uri(self.session, t_link, self.params)
+    def add_magnet(self, obj, season_list=None):
+        """
+        :param obj: {}
+        :param season_list:
+        :return:
+        """
+        if season_list:
+            save_path = self.get_save_path(season_list[0])
+
+            params = { 'save_path': save_path,
+                       'storage_mode': lt.storage_mode_t.storage_mode_sparse }
+
+            for episode in season_list:
+                t = lt.add_magnet_uri(self.session, episode['link'], params)
                 self.torrents.append(t)
 
-        elif link:
-            t = lt.add_magnet_uri(self.session, link, self.params)
+        t = lt.add_magnet_uri(self.session, obj['link'], params)
+        self.torrents.append(t)
 
-        return self.torrents.append(t)
+        return None
 
-    def is_all_torrents_finished(self):
+    def is_all_finished(self):
         for i in self.torrents:
             if not i.is_finished():
                 return False
@@ -55,6 +65,25 @@ class TorrentClient(object):
         print(tabulate(t_list, headers=headers, tablefmt='orgtbl'))
 
         return None
+
+    def get_save_path(self, obj):
+        name_splited = []
+
+        if obj['search_choice'] == 'season' and self.download_season_path:
+            if obj['title'].split('') > 2:
+                name_splited = obj['title'].split('')
+            elif obj['title'].split('.') > 2:
+                name_splited = obj['title'].split('.')
+
+        name = []
+        for word in name_splited:
+            match_obj = re.match(r'S[0-9]{2}E[0-9]{2}', word, re.I)
+            if match_obj:
+                name.append(word)
+                break
+            name.append(word)
+
+        return '.'.split(map(str, name))
 
 def order_season_download_files_in_one_folder():
     pass

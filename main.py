@@ -67,14 +67,23 @@ class View(object):
             return None
 
         if option_menu == '1':
-            option_download = raw_input("Which one to download: ")
-            self.client.add_magnet_torrent(link=self.result_list[int(option_download)]['link'])
+            option_download = int(raw_input("Which one to download: ")) - 1
+
+            obj = self.result_list[option_download]
+            obj['type'] = 'general'
+            self.client.add_magnet(obj=obj)
+
+            print "File added. Try call clinet.status() to check the progress"
 
         if option_menu == '2':
-            link_list = [obj['link'] for obj in self.result_list]
-            self.client.add_magnet_torrent(t_list=link_list)
+            season_list = []
+            for obj in self.result_list:
+                obj['type'] = 'season'
+                season_list.append(obj)
+                self.client.add_magnet(season_list=season_list)
 
-        print "File added. Try call clinet.status() to check the progress"
+            print "File added. Try call clinet.status() to check the progress"
+
         return None
 
     def search_general(self, clear=True):
@@ -96,9 +105,9 @@ class View(object):
         if clear:
             os.system('clear')
 
-        serie_name = raw_input("Series name: ")
-        season = raw_input("Season: ")
-        episode = raw_input("Episode: ")
+        serie_name = raw_input("SERIES NAME: ")
+        season = raw_input("SEASON: ")
+        episode = raw_input("EPISODE: ")
         return self.tpb.search_episode(serie_name, season, episode)
 
     def status(self):
@@ -108,10 +117,12 @@ class View(object):
         return sys.exit(m)
 
     def print_results(self):
-        index = 0
+        index = 1
 
         print "\nResults found:"
         for result in self.result_list:
-            print "[{}] - {}".format(index, result['title'])
+            print "    [{}] - {} {}".format(index, result['title'], ''.join(map(str, result['size'])))
             index += 1
         return None
+
+View().main()
