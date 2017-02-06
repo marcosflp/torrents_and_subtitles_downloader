@@ -6,7 +6,7 @@ import subscope
 import time
 
 from core.thepiratebayapi import ThePirateBayApi
-from core.core import TorrentClient
+from core.torrentclient import TorrentClient
 
 class View(object):
     result_list = []
@@ -29,8 +29,9 @@ class View(object):
 
         try:
             self.result_list = self.menu_options[option]()
-        except Exception:
+        except Exception as e:
             os.system('clear')
+            print e.message
             print "INVALID OPTION!\n"
             return self.main()
 
